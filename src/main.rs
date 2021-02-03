@@ -13,10 +13,11 @@ error_chain! {
 
 fn main() -> Result<()> {
     loop {
-        let res = reqwest::blocking::get("https://rss.globenewswire.com/HexMLItem/Content/FullText/Attachments/All/Identifier/1007942/language/en")?;
+        let now: DateTime<Utc> = Utc::now();
+        let url: String = format!("https://rss.globenewswire.com/HexMLItem/Content/FullText/Attachments/All/Identifier/1007942/language/en?_={}", now.timestamp_subsec_millis());
+        let res = reqwest::blocking::get(&url)?;
         if res.status().is_success() {
             if let Some(content_length) = res.content_length() {
-                let now: DateTime<Utc> = Utc::now();
                 let now: String = now.to_rfc3339();
                 match content_length {
                     3530 => {
