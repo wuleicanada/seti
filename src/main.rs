@@ -16,16 +16,18 @@ fn main() -> Result<()> {
         let res = reqwest::blocking::get("https://rss.globenewswire.com/HexMLItem/Content/FullText/Attachments/All/Identifier/1007942/language/en")?;
         if res.status().is_success() {
             if let Some(content_length) = res.content_length() {
+                let now: DateTime<Utc> = Utc::now();
+                let now: String = now.to_rfc3339();
                 match content_length {
                     3530 => {
-                        print!(".");
+                        print!("{}\r", now);
                         io::stdout().flush().unwrap();
                     },
                     _ => {
-                        let now: DateTime<Utc> = Utc::now();
-                        println!("Time now is: {}", now.to_rfc3339());
+                        println!("Time now is: {}", now);
                         println!("\nContent-length: {}", content_length);
                         println!("Body:\n{}", res.text().unwrap());
+
                         let mut input = io::stdin();
                         let _ = input.read(&mut [0u8]).unwrap();
                         return Ok(());
@@ -38,6 +40,6 @@ fn main() -> Result<()> {
               io::stdout().flush().unwrap();
               return Ok(());
         }
-        thread::sleep(time::Duration::from_secs(60));
+        thread::sleep(time::Duration::from_millis(500));
     }
 }
